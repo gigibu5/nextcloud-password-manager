@@ -1,0 +1,16 @@
+{
+	"EN":{
+		"title": "Password manager",
+		"search": "Search",
+		"clipboard": "Clear clipboard",
+		"username": "U",
+		"password": "P"
+	},
+	"SI":{
+		"title": "Upravljalnik gesel",
+		"search": "Išči",
+		"clipboard": "Počisti odložišče",
+		"username": "U",
+		"password": "G"
+	}
+}
