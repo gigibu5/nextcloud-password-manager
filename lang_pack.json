@@ -3,14 +3,16 @@
 		"title": "Password manager",
 		"search": "Search",
 		"clipboard": "Clear clipboard",
-		"username": "U",
-		"password": "P"
+		"url": "Website",
+		"username": "Username",
+		"password": "Password"
 	},
 	"SI":{
 		"title": "Upravljalnik gesel",
 		"search": "Išči",
 		"clipboard": "Počisti odložišče",
-		"username": "U",
-		"password": "G"
+		"url": "Spletno mesto",
+		"username": "Uporabniško ime",
+		"password": "Geslo"
 	}
 }

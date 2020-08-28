@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+import webbrowser
 import PyQt5.QtWidgets as qtw
 from PyQt5.QtCore import Qt
 from PyQt5.Qt import QApplication, QClipboard
@@ -13,39 +14,46 @@ lang = json.loads(f.read())[language]
 f.close()
 
 class Password(qtw.QWidget):
-	def __init__(self, name, username, password):
+	def __init__(self, passwordd):
 		super(Password, self).__init__()
 
-		self.name = name
-		self.username = username
-		self.password = password
+		self.name = passwordd["label"]
+		self.username = passwordd["username"]
+		self.password = passwordd["password"]
+		self.url = passwordd["url"]
 
 		self.lbl = qtw.QLabel(self.name)
-		self.btnUsername = qtw.QPushButton(lang["username"])
-		self.btnPassword = qtw.QPushButton(lang["password"])
-
-		self.btnUsername.setMinimumWidth(35)
-		self.btnUsername.setMaximumWidth(35)
-		self.btnPassword.setMaximumWidth(35)
-		self.btnPassword.setMaximumWidth(35)
+		self.lbl.setToolTip(passwordd["notes"])
 
 		# Button and label layout
 		self.hbox = qtw.QHBoxLayout()
 		self.hbox.addWidget(self.lbl)
-		self.hbox.addWidget(self.btnUsername)
-		self.hbox.addWidget(self.btnPassword)
-
-		self.btnUsername.clicked.connect(self.btnUser)
-		self.btnPassword.clicked.connect(self.btnPass)
 		
+		# Generating buttons
+		buttons = ["url","username","password"]
+		object_buttons = []
+
+		for i in buttons:
+			btn = qtw.QPushButton(lang[i][:1])
+			btn.setMaximumWidth(35)
+			btn.setMaximumWidth(35)
+			self.hbox.addWidget(btn)
+			tooltip = lang[i]
+			if(i == "url"):
+				if(self.url == ""):
+					btn.setDisabled(True)
+				else:
+					tooltip += ": " + self.url
+			btn.setToolTip(tooltip)
+			object_buttons.append(btn)
+
+		object_buttons[0].clicked.connect(lambda: webbrowser.open(self.url))
+		object_buttons[1].clicked.connect(lambda: QApplication.clipboard().setText(self.username))
+		object_buttons[2].clicked.connect(lambda: QApplication.clipboard().setText(self.password))
+
 		self.setLayout(self.hbox)
+		
 	
-	def btnUser(self):
-		QApplication.clipboard().setText(self.username)
-
-	def btnPass(self):
-		QApplication.clipboard().setText(self.password)
-
 class Window(qtw.QWidget):
 	def __init__(self):
 		qtw.QWidget.__init__(self)
@@ -65,7 +73,7 @@ class Window(qtw.QWidget):
 
 		# CLEAR CLIPBOARD BUTTON --------------
 		self.clearClip = qtw.QPushButton(lang["clipboard"])
-		self.clearClip.clicked.connect(self.clearClipboard)
+		self.clearClip.clicked.connect(lambda: QApplication.clipboard().setText(""))
 
 		layout.addWidget(self.clearClip)
 		# CLEAR CLIPBOARD BUTTON --------------
@@ -82,17 +90,20 @@ class Window(qtw.QWidget):
 
 		converted = json.loads(raw)
 
+		converted = self.sortiraj(converted)
+
 		for i in converted["passwords"]:
-			label = Password(i["label"], i["username"], i["password"])
+			label = Password(i)
 			self.passwordsLayout.addWidget(label)
 			self.widgets.append(label)
 
-		# tale del je da ne gre vse na sredino in da je lepo poravnan
-		spacer = qtw.QSpacerItem(1, 1, qtw.QSizePolicy.Minimum, qtw.QSizePolicy.Expanding)
+		# adding a spacer so eerything is aligned
+		spacer = qtw.QSpacerItem(1, 1, qtw.QSizePolicy.Minimum,
+			qtw.QSizePolicy.Expanding)
 		self.passwordsLayout.addItem(spacer)
 		self.passwords.setLayout(self.passwordsLayout)
 
-		# da lohk gor pa dol skrolas
+		# scroll box
 		self.scroll = qtw.QScrollArea()
 		self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 		self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -109,13 +120,21 @@ class Window(qtw.QWidget):
 				i.show()
 			else:
 				i.hide()
-		#print(lbl)
-	
-	def clearClipboard(self):
-		QApplication.clipboard().setText("")
+
+	def sortiraj(self, converted_json):
+		p = converted_json["passwords"]
+		for i in range(len(p)):
+			for j in range(len(p)-i-1):
+				if(p[j]["label"] > p[j+1]["label"]):
+					temp = p[j]
+					p[j] = p[j+1]
+					p[j + 1] = temp
+		converted_json["passwords"] = p
+		return converted_json
+
 
 program = qtw.QApplication([])
 okn = Window()
 okn.show()
-okn.setFixedWidth(okn.width())
+okn.setMinimumWidth(okn.width())
 program.exec_()
