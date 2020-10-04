@@ -1,16 +1,18 @@
 {
-	"EN":{
+	"EN": {
 		"title": "Password manager",
 		"search": "Search",
 		"clipboard": "Clear clipboard",
+		"clipboardTooltip": "Empties your copy clipboard, so your passwords arent saved anywhere",
 		"url": "Website",
 		"username": "Username",
 		"password": "Password"
 	},
-	"SI":{
+	"SI": {
 		"title": "Upravljalnik gesel",
 		"search": "Išči",
 		"clipboard": "Počisti odložišče",
+		"clipboardTooltip": "Izprazni vaše odložišče, da vaša gesla niso shranjena",
 		"url": "Spletno mesto",
 		"username": "Uporabniško ime",
 		"password": "Geslo"

@@ -7,11 +7,17 @@ from PyQt5.QtCore import Qt
 from PyQt5.Qt import QApplication, QClipboard
 
 # Select language: EN - English, SI - Slovene
-language = "EN"
+language = "SI"
 f = open("lang_pack.json")
 
 lang = json.loads(f.read())[language]
 f.close()
+
+class Folder(qtw.QWidget):
+	def __init__(self, folderr):
+		super(Folder, self).__init__()
+
+		self.lbl = qtw.QLabel("test")
 
 class Password(qtw.QWidget):
 	def __init__(self, passwordd):
@@ -73,6 +79,7 @@ class Window(qtw.QWidget):
 
 		# CLEAR CLIPBOARD BUTTON --------------
 		self.clearClip = qtw.QPushButton(lang["clipboard"])
+		self.clearClip.setToolTip(lang["clipboardTooltip"])
 		self.clearClip.clicked.connect(lambda: QApplication.clipboard().setText(""))
 
 		layout.addWidget(self.clearClip)
@@ -91,6 +98,8 @@ class Window(qtw.QWidget):
 		converted = json.loads(raw)
 
 		converted = self.sortiraj(converted)
+
+		self.passwordsLayout.addWidget(Folder("test"))
 
 		for i in converted["passwords"]:
 			label = Password(i)
